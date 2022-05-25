@@ -66,8 +66,6 @@ params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info
 
 json_params = json.dumps(params)
 
-print(json_params)
-
 url = 'http://portal.cso.com/compinfo'
 resp = requests.post(url, data = json_params)
 

@@ -39,7 +39,7 @@ class recieve_info():
 
     def get_MotherBoard():
         computer = wmi.WMI()
-        mBoard_Info = computer.Win32_BaseBoard()[0].Model
+        mBoard_Info = computer.Win32_BaseBoard()[0].Product
         return mBoard_Info
     
     def get_SysRamInfo():
@@ -69,12 +69,12 @@ params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info
             'RAM' : str(recieve_info.get_SysRamInfo()) + 'GB', 'GPU' : recieve_info.get_GPUinfo(),
             'StorageModel' : recieve_info.get_SysStorModel(), 'StorageSize' : str(recieve_info.get_SysMemSize()) + 'GB'}
 
-# json_params = json.dumps(params)
+json_params = json.dumps(params)
 
-print(params)
+print(json_params)
 
-# url = 'http://portal.cso.com/compinfo'
-# resp = requests.post(url, data = json_params)
+url = 'http://portal.cso.com/compinfo'
+resp = requests.post(url, data = json_params)
 
-# if resp.ok:
-#    exit()
+if resp.ok:
+    exit()

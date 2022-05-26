@@ -73,7 +73,7 @@ json_params = json.dumps(params)
 
 print(json_params)
 
-url = 'http://portal.cso.com/compinfo'
+url = 'url'
 resp = requests.post(url, data = json_params)
 
 if resp.ok:

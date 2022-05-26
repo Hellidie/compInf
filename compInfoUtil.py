@@ -2,7 +2,7 @@ import socket
 import uuid
 import wmi
 import re
-from requests import requests
+import requests
 import json
 import os
 from dataclasses import dataclass
@@ -36,6 +36,11 @@ class recieve_info():
         computer = wmi.WMI()
         proc_info = computer.Win32_Processor()[0]
         return proc_info.Name
+
+    def get_MotherBoard():
+        computer = wmi.WMI()
+        mBoard_Info = computer.Win32_BaseBoard()[0].Model
+        return mBoard_Info
     
     def get_SysRamInfo():
         computer = wmi.WMI()
@@ -60,14 +65,16 @@ class recieve_info():
         return int(int(system_storage.size) / 1024**3)
 
 params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info.get_NamePC(), 'IP-adress' : recieve_info.get_IP(),
-            'Mac-adress' : recieve_info.get_Mac(), 'Processor' : recieve_info.get_ProcInfo(),
+            'Mac-adress' : recieve_info.get_Mac(), 'Processor' : recieve_info.get_ProcInfo(), 'Motherboard' : recieve_info.get_MotherBoard(),
             'RAM' : str(recieve_info.get_SysRamInfo()) + 'GB', 'GPU' : recieve_info.get_GPUinfo(),
             'StorageModel' : recieve_info.get_SysStorModel(), 'StorageSize' : str(recieve_info.get_SysMemSize()) + 'GB'}
 
-json_params = json.dumps(params)
+# json_params = json.dumps(params)
 
-url = 'http://portal.cso.com/compinfo'
-resp = requests.post(url, data = json_params)
+print(params)
 
-if resp.ok:
-    exit()
+# url = 'http://portal.cso.com/compinfo'
+# resp = requests.post(url, data = json_params)
+
+# if resp.ok:
+#    exit()

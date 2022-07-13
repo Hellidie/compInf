@@ -1,24 +1,24 @@
 import socket
-import uuid
-import wmi
-import re
-import requests
-import json
-import os
+from uuid import getnode
+from wmi import WMI 
+from re import findall
+from requests import post
+from json import dumps
+from os import environ
 from dataclasses import dataclass
 
 @dataclass
 class recieve_info():
     
     def get_Username():
-        return os.environ.get('USERNAME')
+        return environ.get('USERNAME')
     
     def get_NamePC():
         namePC = socket.gethostname()
         return namePC
 
     def get_Mac():
-        macAddr = ':'.join(re.findall('..', '%012x' % uuid.getnode()))         # получаем mac-адресс
+        macAddr = ':'.join(findall('..', '%012x' % getnode()))
         return macAddr
 
     def get_IP():
@@ -32,49 +32,31 @@ class recieve_info():
             st.close()
         return userIP
 
-    def get_ProcInfo():
-        computer = wmi.WMI()
+    def get_HardwareInfo():
+        computer = WMI()
         proc_info = computer.Win32_Processor()[0]
-        return proc_info.Name
-
-    def get_MotherBoard():
-        computer = wmi.WMI()
         mBoard_Info = computer.Win32_BaseBoard()[0].Product
-        return mBoard_Info
-    
-    def get_SysRamInfo():
-        computer = wmi.WMI()
         os_info = computer.Win32_OperatingSystem()[0]
         system_ram = float(os_info.TotalVisibleMemorySize) / 1048576
         system_ram = int(system_ram * 100) / 100
-        return system_ram
-
-    def get_GPUinfo():
-        computer = wmi.WMI()
         gpu_info = computer.Win32_VideoController()[0]
-        return gpu_info.Name
-
-    def get_SysStorModel():
-        computer = wmi.WMI()
         [system_storage] = computer.Win32_DiskDrive(Index=0)
-        return system_storage.Model
+        return {'Processor' : proc_info.Name, 'Motherboard' : mBoard_Info, 'RAM' : str(system_ram) + 'GB', \
+            'GPU' : gpu_info.Name, 'StorageModel' :  system_storage.Model, \
+            'StorageSize' : str(int(int(system_storage.Size) / 1024**3)) + 'GB'}
 
-    def get_SysMemSize():
-        computer = wmi.WMI()
-        [system_storage] = computer.Win32_DiskDrive(Index=0)
-        return int(int(system_storage.size) / 1024**3)
 
+hardwareReturn = recieve_info.get_HardwareInfo()
 params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info.get_NamePC(), 'IP-adress' : recieve_info.get_IP(),
-            'Mac-adress' : recieve_info.get_Mac(), 'Processor' : recieve_info.get_ProcInfo(), 'Motherboard' : recieve_info.get_MotherBoard(),
-            'RAM' : str(recieve_info.get_SysRamInfo()) + 'GB', 'GPU' : recieve_info.get_GPUinfo(),
-            'StorageModel' : recieve_info.get_SysStorModel(), 'StorageSize' : str(recieve_info.get_SysMemSize()) + 'GB'}
+            'Mac-adress' : recieve_info.get_Mac()}
+params.update(hardwareReturn)
 
-json_params = json.dumps(params)
+json_params = dumps(params)
 
 print(json_params)
 
-url = 'url'
-resp = requests.post(url, data = json_params)
+url = ''
+resp = post(url, data = json_params)
 
 if resp.ok:
     exit()

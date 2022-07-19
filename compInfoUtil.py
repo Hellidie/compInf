@@ -1,11 +1,10 @@
 import socket
-from uuid import getnode
-from wmi import WMI 
-from re import findall
+from wmi import WMI
 from requests import post
 from json import dumps
 from os import environ
 from dataclasses import dataclass
+from getmac import get_mac_address as gma
 
 @dataclass
 class recieve_info():
@@ -18,8 +17,8 @@ class recieve_info():
         return namePC
 
     def get_Mac():
-        macAddr = ':'.join(findall('..', '%012x' % getnode()))
-        return macAddr
+        macaddr = gma()
+        return macaddr
 
     def get_IP():
         st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,16 +46,13 @@ class recieve_info():
 
 
 hardwareReturn = recieve_info.get_HardwareInfo()
-params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info.get_NamePC(), 'IP-adress' : recieve_info.get_IP(),
-            'Mac-adress' : recieve_info.get_Mac()}
+params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info.get_NamePC(), 'IPadress' : recieve_info.get_IP(),
+            'MacAdress' : recieve_info.get_Mac()}
 params.update(hardwareReturn)
 
 json_params = dumps(params)
-
-print(json_params)
-
-url = ''
+url = 'http://portal.cso.com/compinfo'
 resp = post(url, data = json_params)
 
 if resp.ok:
-    exit()
+   exit()

@@ -51,7 +51,7 @@ params = {'CurrentUsername' : recieve_info.get_Username(), 'Name' : recieve_info
 params.update(hardwareReturn)
 
 json_params = dumps(params)
-url = 'http://portal.cso.com/compinfo'
+url = ''
 resp = post(url, data = json_params)
 
 if resp.ok:

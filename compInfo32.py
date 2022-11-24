@@ -72,7 +72,7 @@ def main():
 
     json_params = dumps(params)
     print(json_params)
-    url = 'http://portal.cso.com/compinfo'
+    url = ''
     resp = post(url, data = json_params)
 
     if resp.ok:

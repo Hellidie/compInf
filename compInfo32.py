@@ -75,7 +75,4 @@ def main():
     url = ''
     resp = post(url, data = json_params)
 
-    if resp.ok:
-        exit()
-
 main()
